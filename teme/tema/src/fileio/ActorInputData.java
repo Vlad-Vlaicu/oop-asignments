@@ -1,6 +1,6 @@
 package fileio;
 
-import actor.ActorsAwards;
+import entertainment.ActorsAwards;
 
 import java.util.ArrayList;
 import java.util.Map;

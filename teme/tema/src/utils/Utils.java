@@ -1,6 +1,6 @@
 package utils;
 
-import actor.ActorsAwards;
+import entertainment.ActorsAwards;
 import common.Constants;
 import entertainment.Genre;
 import org.json.simple.JSONArray;

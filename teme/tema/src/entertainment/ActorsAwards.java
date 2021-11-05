@@ -1,4 +1,4 @@
-package actor;
+package entertainment;
 
 /**
  * Awards for actors to be used for queries

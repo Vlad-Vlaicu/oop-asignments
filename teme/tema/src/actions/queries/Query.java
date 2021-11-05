@@ -1,7 +1,7 @@
 package actions.queries;
 
 import actions.Action;
-import actor.ActorsAwards;
+import entertainment.ActorsAwards;
 import entertainment.Genre;
 
 import java.util.ArrayList;
