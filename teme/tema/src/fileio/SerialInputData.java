@@ -1,6 +1,6 @@
 package fileio;
 
-import entertainment.Season;
+import entities.Season;
 
 import java.util.ArrayList;
 
