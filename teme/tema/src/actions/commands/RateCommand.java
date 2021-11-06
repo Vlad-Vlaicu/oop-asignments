@@ -5,7 +5,7 @@ import actions.Action;
 public class RateCommand extends Action {
     private String user;
     private String title;
-    private int grade;
+    private double grade;
     private int currentSeason;
 
     public RateCommand(int action_id, String action_type) {
@@ -28,11 +28,11 @@ public class RateCommand extends Action {
         this.title = title;
     }
 
-    public int getGrade() {
+    public double getGrade() {
         return grade;
     }
 
-    public void setGrade(int grade) {
+    public void setGrade(double grade) {
         this.grade = grade;
     }
 
