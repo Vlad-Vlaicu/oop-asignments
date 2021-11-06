@@ -2,12 +2,10 @@ package entities;
 
 import entertainment.ActorsAwards;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Actor {
+    private int id;
     private String name;
     private String career_description;
     private List<String> filmography;
@@ -16,6 +14,14 @@ public class Actor {
     public Actor(){
         filmography = new ArrayList<>();
         awards = new HashMap<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -48,5 +54,21 @@ public class Actor {
 
     public void setAwards(Map<ActorsAwards, Integer> awards) {
         this.awards = awards;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Actor actor = (Actor) o;
+        return name.equals(actor.name) &&
+                career_description.equals(actor.career_description) &&
+                filmography.equals(actor.filmography) &&
+                Objects.equals(awards, actor.awards);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, career_description, filmography, awards);
     }
 }

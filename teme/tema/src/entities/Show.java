@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Show {
+    private int id;
     private String name;
     private int year;
     private List<String> cast;
@@ -17,6 +18,14 @@ public class Show {
         cast = new ArrayList<>();
         genres = new ArrayList<>();
         seasons = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

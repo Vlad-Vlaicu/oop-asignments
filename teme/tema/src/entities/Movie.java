@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Movie {
+    private int id;
     private String name;
     private int year;
     private int duration;
@@ -15,6 +16,14 @@ public class Movie {
     public Movie() {
         genres = new ArrayList<>();
         cast = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {

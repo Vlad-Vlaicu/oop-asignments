@@ -2,13 +2,13 @@ package dao;
 
 import database.Database;
 import entities.Actor;
-
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ActorDao implements Dao<Actor>{
 
     private Database database;
+
 
     public ActorDao(Database database){
         this.database = database;
@@ -16,26 +16,28 @@ public class ActorDao implements Dao<Actor>{
 
     @Override
     public Optional<Actor> get(int id) {
-        return Optional.empty();
+        List<Actor> list = database.selectActors();
+        Actor actor = list.get(id);
+        return Optional.ofNullable(actor);
     }
 
     @Override
     public List<Actor> getAll() {
-        return null;
+        return database.selectActors();
     }
 
     @Override
     public void save(Actor actor) {
-
+        AtomicInteger idHolder = database.getIdActorHolder();
+        int id = idHolder.getAndIncrement();
+        actor.setId(id);
+        List<Actor> list = getAll();
+        list.add(actor);
     }
 
     @Override
-    public void update(Actor oldObject, Actor newObject) {
-
-    }
-
-    @Override
-    public void delete(Actor actor) {
-
+    public void delete(int id) {
+        List<Actor> list = getAll();
+        list.remove(id);
     }
 }

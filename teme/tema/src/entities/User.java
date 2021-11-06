@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class User {
+    private int id;
     private String username;
     private Subscription subscription;
     private Map<String,Integer> history;
@@ -16,6 +18,14 @@ public class User {
     public User() {
         history = new HashMap<>();
         favouriteList = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUsername() {
