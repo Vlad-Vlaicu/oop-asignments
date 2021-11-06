@@ -4,6 +4,7 @@ import entertainment.Genre;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Show {
     private int id;
@@ -74,5 +75,23 @@ public class Show {
 
     public void setSeasons(List<Season> seasons) {
         this.seasons = seasons;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Show show = (Show) o;
+        return year == show.year &&
+                numberOfSeasons == show.numberOfSeasons &&
+                name.equals(show.name) &&
+                cast.equals(show.cast) &&
+                genres.equals(show.genres) &&
+                Objects.equals(seasons, show.seasons);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, year, cast, genres, numberOfSeasons, seasons);
     }
 }

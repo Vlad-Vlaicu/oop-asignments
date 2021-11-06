@@ -2,10 +2,7 @@ package entities;
 
 import entertainment.Subscription;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class User {
@@ -58,5 +55,19 @@ public class User {
 
     public void setFavouriteList(List<String> favouriteList) {
         this.favouriteList = favouriteList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return username.equals(user.username) &&
+                subscription == user.subscription;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, subscription);
     }
 }

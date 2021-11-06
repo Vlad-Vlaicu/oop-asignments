@@ -3,6 +3,7 @@ package utils;
 import entertainment.ActorsAwards;
 import common.Constants;
 import entertainment.Genre;
+import entertainment.Subscription;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -122,5 +123,13 @@ public final class Utils {
         }
 
         return mapVideos;
+    }
+
+    public static Subscription stringToSubscription(final String s){
+        return switch (s){
+            case "BASIC" -> Subscription.BASIC;
+
+            default -> Subscription.PREMIUM;
+        };
     }
 }

@@ -4,6 +4,7 @@ import entertainment.Genre;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Movie {
     private int id;
@@ -64,5 +65,22 @@ public class Movie {
 
     public void setCast(List<String> cast) {
         this.cast = cast;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Movie movie = (Movie) o;
+        return year == movie.year &&
+                duration == movie.duration &&
+                name.equals(movie.name) &&
+                genres.equals(movie.genres) &&
+                cast.equals(movie.cast);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, year, duration, genres, cast);
     }
 }
