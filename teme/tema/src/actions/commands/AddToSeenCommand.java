@@ -1,6 +1,10 @@
 package actions.commands;
 
 import actions.Action;
+import entities.User;
+import services.UserService;
+
+import java.util.Optional;
 
 public class AddToSeenCommand extends Action {
     private String user;
@@ -28,6 +32,14 @@ public class AddToSeenCommand extends Action {
 
     @Override
     public String execute() {
-        return null;
+        UserService service = new UserService();
+        User user = service.findUserByName(this.user);
+
+        Optional<User> optional = Optional.ofNullable(user);
+        if(optional.isEmpty()){
+            return "error -> no user found";
+        }
+
+        return service.watchMovie(title,user);
     }
 }

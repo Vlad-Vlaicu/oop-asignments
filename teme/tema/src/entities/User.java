@@ -11,6 +11,7 @@ public class User {
     private Subscription subscription;
     private Map<String,Integer> history;
     private List<String> favouriteList;
+    private Map<String,Double> ratings;
 
     public User() {
         history = new HashMap<>();
@@ -55,6 +56,14 @@ public class User {
 
     public void setFavouriteList(List<String> favouriteList) {
         this.favouriteList = favouriteList;
+    }
+
+    public Map<String, Double> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(Map<String, Double> ratings) {
+        this.ratings = ratings;
     }
 
     @Override

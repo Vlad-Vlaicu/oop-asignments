@@ -13,10 +13,12 @@ public class Movie {
     private int duration;
     private List<Genre> genres;
     private List<String> cast;
+    private List<Double> ratings;
 
     public Movie() {
         genres = new ArrayList<>();
         cast = new ArrayList<>();
+        ratings = new ArrayList<>();
     }
 
     public int getId() {
@@ -65,6 +67,14 @@ public class Movie {
 
     public void setCast(List<String> cast) {
         this.cast = cast;
+    }
+
+    public List<Double> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Double> ratings) {
+        this.ratings = ratings;
     }
 
     @Override

@@ -4,6 +4,7 @@ import common.Constants;
 import dao.ShowDao;
 import database.Database;
 import entertainment.Genre;
+import entities.Season;
 import entities.Show;
 import fileio.SerialInputData;
 import utils.Utils;
@@ -14,7 +15,8 @@ import java.util.stream.Collectors;
 public class ShowService {
     private ShowDao showDao;
 
-    public ShowService(Database database){
+    public ShowService(){
+        Database database = Database.getInstance();
         showDao = new ShowDao(database);
     }
 
@@ -51,6 +53,17 @@ public class ShowService {
         return Constants.NOT_FOUND;
     }
 
+    public Show findShowByTitle(String title){
+        List<Show> list = getAllShows();
+        for(Show s : list){
+            String name = s.getName();
+            if(name.equals(title)){
+                return s;
+            }
+        }
+        return null;
+    }
+
     public boolean checkIfShowExists(Show show){
         int id = findShow(show);
         return id != Constants.NOT_FOUND;
@@ -63,6 +76,11 @@ public class ShowService {
         }
         showDao.delete(id);
         return true;
+    }
+
+    public void rateShow(double grade, int season, Show show){
+        Season s = show.getSeasons().get(season-1);
+        s.getRatings().add(grade);
     }
 
     public List<Show> getAllShows(){

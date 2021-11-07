@@ -12,7 +12,8 @@ import java.util.List;
 public class ActorService {
     private ActorDao actorDao;
 
-    public ActorService(Database database) {
+    public ActorService() {
+        Database database = Database.getInstance();
         actorDao = new ActorDao(database);
     }
 

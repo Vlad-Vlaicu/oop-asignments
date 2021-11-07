@@ -1,5 +1,7 @@
 package main;
 
+import actions.Action;
+import actions.ActionFactory;
 import checker.Checkstyle;
 import checker.Checker;
 import common.Constants;
@@ -8,12 +10,14 @@ import fileio.InputLoader;
 import fileio.Writer;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import services.DatabaseService;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -71,9 +75,17 @@ public final class Main {
         Writer fileWriter = new Writer(filePath2);
         JSONArray arrayResult = new JSONArray();
 
+        DatabaseService service = new DatabaseService();
+        service.populateDatabase(input);
 
-        //TODO add here the entry point to your implementation
+        List<Action> actionList = ActionFactory.createActionList(input.getCommands());
+        for(Action a : actionList){
+            String message = a.execute();
+            JSONObject result = fileWriter.writeFile(a.getAction_id(),message);
+            arrayResult.add(result);
+        }
 
         fileWriter.closeJSON(arrayResult);
+        service.resetDatabase();
     }
 }

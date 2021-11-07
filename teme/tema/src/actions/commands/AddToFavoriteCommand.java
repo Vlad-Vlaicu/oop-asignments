@@ -1,6 +1,10 @@
 package actions.commands;
 
 import actions.Action;
+import entities.User;
+import services.UserService;
+
+import java.util.Optional;
 
 public class AddToFavoriteCommand extends Action {
     private String user;
@@ -28,6 +32,24 @@ public class AddToFavoriteCommand extends Action {
 
     @Override
     public String execute() {
-        return null;
+        UserService service = new UserService();
+        User user = service.findUserByName(this.user);
+
+        Optional<User> optional = Optional.ofNullable(user);
+        if(optional.isEmpty()){
+            return "error -> no user found";
+        }
+
+        boolean wasSeen = service.wasMovieSeen(title, user);
+        if(!wasSeen){
+            return "error -> " + title + " is not seen";
+        }
+
+        boolean result = service.addMovieToFavorite(title,user);
+        if(result){
+            return "success -> " + title + " was added as favourite";
+        }
+
+        return "error -> " + title + " is already in favourite list";
     }
 }

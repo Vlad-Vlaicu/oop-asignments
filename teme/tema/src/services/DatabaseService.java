@@ -6,18 +6,18 @@ import fileio.*;
 import java.util.List;
 
 public class DatabaseService {
-    private Database database;
-    private ActorService actorService;
-    private MovieService movieService;
-    private ShowService showService;
-    private UserService userService;
+    private final Database database;
+    private final ActorService actorService;
+    private final MovieService movieService;
+    private final ShowService showService;
+    private final UserService userService;
 
     public DatabaseService(){
         database = Database.getInstance();
-        actorService = new ActorService(database);
-        movieService = new MovieService(database);
-        showService = new ShowService(database);
-        userService = new UserService(database);
+        actorService = new ActorService();
+        movieService = new MovieService();
+        showService = new ShowService();
+        userService = new UserService();
     }
 
     public void populateDatabase(Input input){

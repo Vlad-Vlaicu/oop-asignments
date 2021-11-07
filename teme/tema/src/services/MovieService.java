@@ -14,7 +14,8 @@ import java.util.stream.Collectors;
 public class MovieService {
     private MovieDao movieDao;
 
-    public MovieService(Database database){
+    public MovieService(){
+        Database database = Database.getInstance();
         movieDao = new MovieDao(database);
     }
 
@@ -51,6 +52,17 @@ public class MovieService {
         return Constants.NOT_FOUND;
     }
 
+    public Movie findMovieByTitle(String title){
+        List<Movie> list = getAllMovies();
+        for(Movie m : list){
+            String name = m.getName();
+            if(name.equals(title)){
+                return m;
+            }
+        }
+        return null;
+    }
+
     public boolean checkIfMovieExists(Movie movie){
         int id = findMovie(movie);
         return id != Constants.NOT_FOUND;
@@ -64,6 +76,12 @@ public class MovieService {
         movieDao.delete(id);
         return true;
     }
+
+    public void rateMovie(double grade, Movie movie){
+        var ratings = movie.getRatings();
+        ratings.add(grade);
+    }
+
 
     public List<Movie> getAllMovies() {
         return movieDao.getAll();
