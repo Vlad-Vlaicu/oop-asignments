@@ -9,6 +9,7 @@ import fileio.MovieInputData;
 import utils.Utils;
 
 import java.util.List;
+import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
 public class MovieService {
@@ -80,6 +81,13 @@ public class MovieService {
     public void rateMovie(double grade, Movie movie){
         var ratings = movie.getRatings();
         ratings.add(grade);
+    }
+
+    public double getRating(Movie movie){
+        OptionalDouble result = movie.getRatings().stream().mapToDouble(s -> s).average();
+        if(result.isPresent())
+            return result.getAsDouble();
+        return 0;
     }
 
 

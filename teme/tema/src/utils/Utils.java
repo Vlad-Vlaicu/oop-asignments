@@ -8,6 +8,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.LinkedHashMap;
 
@@ -131,5 +132,19 @@ public final class Utils {
 
             default -> Subscription.PREMIUM;
         };
+    }
+
+    public static String createQueryResult(List<String> items){
+        int size = items.size();
+        StringBuilder result = new StringBuilder("Query result: [");
+        if(size != 0){
+            for(int i = 0; i < size - 1; i++){
+                result.append(items.get(i));
+                result.append(", ");
+            }
+            result.append(items.get(size-1));
+        }
+        result.append("]");
+        return result.toString();
     }
 }

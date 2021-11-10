@@ -10,6 +10,7 @@ import fileio.SerialInputData;
 import utils.Utils;
 
 import java.util.List;
+import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
 public class ShowService {
@@ -83,7 +84,21 @@ public class ShowService {
         s.getRatings().add(grade);
     }
 
+    public double getSeasonRating(Season season){
+        OptionalDouble optionalDouble = season.getRatings().stream().mapToDouble(s -> s).average();
+        if(optionalDouble.isPresent())
+            return optionalDouble.getAsDouble();
+        return 0;
+    }
+
     public List<Show> getAllShows(){
         return showDao.getAll();
+    }
+
+    public Double getRating(Show show){
+        int videos = show.getSeasons().size();
+        double score = show.getSeasons().stream().map(this::getSeasonRating).mapToDouble(s -> s).sum();
+
+        return score/ (double) videos;
     }
 }

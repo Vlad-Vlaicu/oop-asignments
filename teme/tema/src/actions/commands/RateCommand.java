@@ -108,7 +108,7 @@ public class RateCommand extends Action {
 
         boolean isRated = userService.isShowRatedByUser(this.title, this.currentSeason, user);
         if(isRated){
-            return "error -> season of the show already rated by user " + user.getUsername();
+            return "error -> " + title + " has been already rated";
         }
         userService.rateShow(this.title, this.currentSeason, this.grade, user);
         showService.rateShow(this.grade, this.currentSeason, show);
