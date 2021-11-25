@@ -3,9 +3,7 @@ package actions;
 import actions.commands.AddToFavoriteCommand;
 import actions.commands.AddToSeenCommand;
 import actions.commands.RateCommand;
-import actions.queries.ActorQuery;
-import actions.queries.UserQuery;
-import actions.queries.VideoQuery;
+import actions.queries.*;
 import actions.recommendations.*;
 import common.Constants;
 import entertainment.Genre;
@@ -48,7 +46,8 @@ public class ActionFactory {
         String objectType = data.getObjectType();
         return switch (objectType){
             case Constants.ACTORS -> createActorQuery(data);
-            case Constants.MOVIES -> createVideoQuery(data);
+            case Constants.MOVIES -> createMovieQuery(data);
+            case Constants.SHOWS -> createShowQuery(data);
             case Constants.USERS -> createUserQuery(data);
             default -> null;
         };
@@ -112,13 +111,36 @@ public class ActionFactory {
         return query;
     }
 
-    private static Action createVideoQuery(ActionInputData data){
+    private static Action createMovieQuery(ActionInputData data){
         int id = data.getActionId();
         String actionType = data.getActionType();
         List<String> yearFilter = data.getFilters().get(0);
         List<String> genreFilter = data.getFilters().get(1);
 
-        VideoQuery query = new VideoQuery(id,actionType);
+        MovieQuery query = new MovieQuery(id,actionType);
+        query.setObjectType(data.getObjectType());
+        query.setSortType(data.getSortType());
+        query.setCriteria(data.getCriteria());
+        query.setLimit(data.getNumber());
+
+        if(!yearFilter.isEmpty()){
+            int year = Integer.parseInt(yearFilter.get(0));
+            query.setYear(year);
+        }
+        if(!genreFilter.isEmpty()){
+            Genre genre = Utils.stringToGenre(genreFilter.get(0));
+            query.setGenre(genre);
+        }
+        return query;
+    }
+
+    private static Action createShowQuery(ActionInputData data){
+        int id = data.getActionId();
+        String actionType = data.getActionType();
+        List<String> yearFilter = data.getFilters().get(0);
+        List<String> genreFilter = data.getFilters().get(1);
+
+        ShowQuery query = new ShowQuery(id,actionType);
         query.setObjectType(data.getObjectType());
         query.setSortType(data.getSortType());
         query.setCriteria(data.getCriteria());

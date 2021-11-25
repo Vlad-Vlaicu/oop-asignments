@@ -6,6 +6,7 @@ package common;
  * You can define your own constants here or create separate files.
  */
 public final class Constants {
+
     private Constants() {
     }
 
@@ -86,4 +87,6 @@ public final class Constants {
     public static final String AVERAGE = "average";
     public static final String ASC = "asc";
     public static final String DESC = "desc";
+    public static final String LONGEST = "longest";
+    public static final String MOSTVIEWED = "most_viewed";
 }

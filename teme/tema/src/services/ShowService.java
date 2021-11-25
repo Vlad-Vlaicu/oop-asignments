@@ -10,6 +10,7 @@ import fileio.SerialInputData;
 import utils.Utils;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
@@ -100,5 +101,20 @@ public class ShowService {
         double score = show.getSeasons().stream().map(this::getSeasonRating).mapToDouble(s -> s).sum();
 
         return score/ (double) videos;
+    }
+
+    public Integer getShowLength(Show show){
+        return show.getSeasons().stream()
+                .mapToInt(Season::getDuration)
+                .sum();
+    }
+
+    public Show getShowByName(String name){
+
+        Optional<Show> optional = getAllShows().stream()
+                        .filter(s -> s.getName().equals(name))
+                        .findFirst();
+
+        return optional.get();
     }
 }
