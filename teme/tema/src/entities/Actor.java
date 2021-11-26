@@ -2,16 +2,20 @@ package entities;
 
 import entertainment.ActorsAwards;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-public class Actor {
+public final class Actor {
     private int id;
     private String name;
-    private String career_description;
+    private String careerDescription;
     private List<String> filmography;
-    private Map<ActorsAwards,Integer> awards;
+    private Map<ActorsAwards, Integer> awards;
 
-    public Actor(){
+    public Actor() {
         filmography = new ArrayList<>();
         awards = new HashMap<>();
     }
@@ -20,7 +24,7 @@ public class Actor {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
@@ -28,23 +32,23 @@ public class Actor {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
-    public String getCareer_description() {
-        return career_description;
+    public String getCareerDescription() {
+        return careerDescription;
     }
 
-    public void setCareer_description(String career_description) {
-        this.career_description = career_description;
+    public void setCareerDescription(final String careerDescription) {
+        this.careerDescription = careerDescription;
     }
 
     public List<String> getFilmography() {
         return filmography;
     }
 
-    public void setFilmography(List<String> filmography) {
+    public void setFilmography(final List<String> filmography) {
         this.filmography = filmography;
     }
 
@@ -52,23 +56,27 @@ public class Actor {
         return awards;
     }
 
-    public void setAwards(Map<ActorsAwards, Integer> awards) {
+    public void setAwards(final Map<ActorsAwards, Integer> awards) {
         this.awards = awards;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Actor actor = (Actor) o;
-        return name.equals(actor.name) &&
-                career_description.equals(actor.career_description) &&
-                filmography.equals(actor.filmography) &&
-                Objects.equals(awards, actor.awards);
+        return name.equals(actor.name)
+                && careerDescription.equals(actor.careerDescription)
+                && filmography.equals(actor.filmography)
+                && Objects.equals(awards, actor.awards);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, career_description, filmography, awards);
+        return Objects.hash(name, careerDescription, filmography, awards);
     }
 }

@@ -10,23 +10,24 @@ import services.MovieService;
 import services.ShowService;
 import services.UserService;
 import utils.SortingUtils;
-
-import javax.swing.text.html.Option;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class FavoriteRecommendation extends Action {
+public final class FavoriteRecommendation extends Action {
     private String username;
 
-    public FavoriteRecommendation(int action_id, String action_type) {
-        super(action_id, action_type);
+    public FavoriteRecommendation(final int actionId, final String actionType) {
+        super(actionId, actionType);
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
@@ -36,31 +37,32 @@ public class FavoriteRecommendation extends Action {
         ShowService showService = new ShowService();
         UserService userService = new UserService();
         User user = userService.findUserByName(username);
-        if(user.getSubscription() == Subscription.BASIC){
+        if (user.getSubscription() == Subscription.BASIC) {
             return "FavoriteRecommendation cannot be applied!";
         }
 
-        Map<String,Integer> history = user.getHistory();
+        Map<String, Integer> history = user.getHistory();
 
-        HashMap<String,Integer> map = new HashMap<>();
+        HashMap<String, Integer> map = new HashMap<>();
         userService.getAllUsers().stream()
-                .flatMap( s -> s.getFavouriteList().stream())
-                .forEach(s -> {if(map.containsKey(s)) {
-                    int value = map.get(s);
-                    value++;
-                    map.replace(s,value);
-                }
-                else{
-                    map.put(s,1);
-                }
+                .flatMap(s -> s.getFavouriteList().stream())
+                .forEach(s -> {
+                    if (map.containsKey(s)) {
+                        int value = map.get(s);
+                        value++;
+                        map.replace(s, value);
+                    } else {
+                        map.put(s, 1);
+                    }
                 });
 
         List<Rating> result = map.entrySet().stream()
-                .map(s -> new Rating(s.getKey(),s.getValue()))
+                .map(s -> new Rating(s.getKey(), s.getValue()))
                 .collect(Collectors.toList());
 
-        for(Rating r : result){
-            Optional<Movie> movieBox = Optional.ofNullable(movieService.findMovieByTitle(r.getName()));
+        for (Rating r : result) {
+            Optional<Movie> movieBox = Optional.ofNullable(movieService.
+                    findMovieByTitle(r.getName()));
             Optional<Show> showBox = Optional.ofNullable(showService.getShowByName(r.getName()));
             movieBox.ifPresent(movie -> r.setSecondScore(movie.getId()));
             showBox.ifPresent(show -> r.setSecondScore(show.getId()));
@@ -68,8 +70,8 @@ public class FavoriteRecommendation extends Action {
 
         SortingUtils.videoFavRecomm(result);
 
-        for(Rating r : result){
-            if(!history.containsKey(r.getName())){
+        for (Rating r : result) {
+            if (!history.containsKey(r.getName())) {
                 return "FavoriteRecommendation result: " + r.getName();
             }
         }

@@ -1,29 +1,50 @@
 package actions;
-
+/** Represents an action that will be made
+ * based on the input
+ **/
 public abstract class Action {
-    private int action_id;
-    private String action_type;
+    private int actionId;
+    private String actionType;
 
-    public Action(int action_id, String action_type) {
-        this.action_id = action_id;
-        this.action_type = action_type;
+    /** Creates an Action with the specified id and type
+     * @param actionId is the id of the action
+     * @param actionType is the type of the action
+     * */
+    public Action(final int actionId, final String actionType) {
+        this.actionId = actionId;
+        this.actionType = actionType;
     }
 
-    public int getAction_id() {
-        return action_id;
+    /** Gets the Action's id
+     * @return an integer representing the id of the action
+     * */
+    public int getActionId() {
+        return actionId;
     }
 
-    public void setAction_id(int action_id) {
-        this.action_id = action_id;
+    /** Sets the Action's id
+    * @param actionId the new id of the action
+    * */
+    public void setActionId(final int actionId) {
+        this.actionId = actionId;
     }
 
-    public String getAction_type() {
-        return action_type;
+    /** Gets the Action's type
+     * @return a String that represents the action type
+     * */
+    public String getActionType() {
+        return actionType;
     }
 
-    public void setAction_type(String action_type) {
-        this.action_type = action_type;
+    /** Sets the Action's type
+     * @param actionType represents the new type of the action
+     * */
+    public void setActionType(final String actionType) {
+        this.actionType = actionType;
     }
 
+    /** An abstract method that will be implemented for each type
+     * of action
+     * */
     public abstract String execute();
 }

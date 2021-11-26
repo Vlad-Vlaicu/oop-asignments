@@ -10,21 +10,21 @@ import services.UserService;
 
 import java.util.Optional;
 
-public class RateCommand extends Action {
+public final class RateCommand extends Action {
     private String user;
     private String title;
     private double grade;
     private int currentSeason;
 
-    public RateCommand(int action_id, String action_type) {
-        super(action_id, action_type);
+    public RateCommand(final int actionId, final String actionType) {
+        super(actionId, actionType);
     }
 
     public String getUser() {
         return user;
     }
 
-    public void setUser(String user) {
+    public void setUser(final String user) {
         this.user = user;
     }
 
@@ -32,7 +32,7 @@ public class RateCommand extends Action {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -40,7 +40,7 @@ public class RateCommand extends Action {
         return grade;
     }
 
-    public void setGrade(double grade) {
+    public void setGrade(final double grade) {
         this.grade = grade;
     }
 
@@ -48,19 +48,19 @@ public class RateCommand extends Action {
         return currentSeason;
     }
 
-    public void setCurrentSeason(int currentSeason) {
+    public void setCurrentSeason(final int currentSeason) {
         this.currentSeason = currentSeason;
     }
 
     @Override
     public String execute() {
-        if(currentSeason == 0){
+        if (currentSeason == 0) {
             return rateMovie();
         }
         return rateShow();
     }
 
-    private String rateMovie(){
+    private String rateMovie() {
         UserService userService = new UserService();
         MovieService movieService = new MovieService();
 
@@ -72,20 +72,20 @@ public class RateCommand extends Action {
 
 
 
-        if(userBox.isEmpty()){
+        if (userBox.isEmpty()) {
             return "error -> user not found";
         }
 
-        if(movieBox.isEmpty()){
+        if (movieBox.isEmpty()) {
             return "error -> movie not found";
         }
-        boolean isMovieSeen = userService.wasVideoSeen(title,user);
-        if(!isMovieSeen){
+        boolean isMovieSeen = userService.wasVideoSeen(title, user);
+        if (!isMovieSeen) {
             return "error -> " + title + " is not seen";
         }
 
-        boolean isRated = userService.isMovieRatedByUser(this.title,user);
-        if(isRated){
+        boolean isRated = userService.isMovieRatedByUser(this.title, user);
+        if (isRated) {
             return "error -> " + title + " has been already rated";
         }
         userService.rateMovie(this.title, this.grade, user);
@@ -94,7 +94,7 @@ public class RateCommand extends Action {
 
     }
 
-    private String rateShow(){
+    private String rateShow() {
         UserService userService = new UserService();
         ShowService showService = new ShowService();
 
@@ -104,21 +104,21 @@ public class RateCommand extends Action {
         Optional<User> userBox = Optional.ofNullable(user);
         Optional<Show> showBox = Optional.ofNullable(show);
 
-        if(userBox.isEmpty()){
+        if (userBox.isEmpty()) {
             return "error -> user not found";
         }
 
-        if(showBox.isEmpty()){
+        if (showBox.isEmpty()) {
             return "error -> show not found";
         }
 
-        boolean isShowSeen = userService.wasVideoSeen(title,user);
-        if(!isShowSeen){
+        boolean isShowSeen = userService.wasVideoSeen(title, user);
+        if (!isShowSeen) {
             return "error -> " + title + " is not seen";
         }
 
         boolean isRated = userService.isShowRatedByUser(this.title, this.currentSeason, user);
-        if(isRated){
+        if (isRated) {
             return "error -> " + title + " has been already rated";
         }
         userService.rateShow(this.title, this.currentSeason, this.grade, user);

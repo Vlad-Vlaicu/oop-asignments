@@ -79,9 +79,9 @@ public final class Main {
         service.populateDatabase(input);
 
         List<Action> actionList = ActionFactory.createActionList(input.getCommands());
-        for(Action a : actionList){
+        for (Action a : actionList) {
             String message = a.execute();
-            JSONObject result = fileWriter.writeFile(a.getAction_id(),message);
+            JSONObject result = fileWriter.writeFile(a.getActionId(), message);
             arrayResult.add(result);
         }
 

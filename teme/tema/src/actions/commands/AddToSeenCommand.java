@@ -6,19 +6,19 @@ import services.UserService;
 
 import java.util.Optional;
 
-public class AddToSeenCommand extends Action {
+public final class AddToSeenCommand extends Action {
     private String user;
     private String title;
 
-    public AddToSeenCommand(int action_id, String action_type) {
-        super(action_id, action_type);
+    public AddToSeenCommand(final int actionId, final String actionType) {
+        super(actionId, actionType);
     }
 
     public String getUser() {
         return user;
     }
 
-    public void setUser(String user) {
+    public void setUser(final String user) {
         this.user = user;
     }
 
@@ -26,7 +26,7 @@ public class AddToSeenCommand extends Action {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -36,10 +36,10 @@ public class AddToSeenCommand extends Action {
         User user = service.findUserByName(this.user);
 
         Optional<User> optional = Optional.ofNullable(user);
-        if(optional.isEmpty()){
+        if (optional.isEmpty()) {
             return "error -> no user found";
         }
 
-        return service.watchMovie(title,user);
+        return service.watchVideo(title, user);
     }
 }

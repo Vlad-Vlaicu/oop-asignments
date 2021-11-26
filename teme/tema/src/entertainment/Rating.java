@@ -1,6 +1,6 @@
 package entertainment;
 
-public class Rating {
+public final class Rating {
     private String name;
     private double score;
     private double secondScore;
@@ -8,12 +8,12 @@ public class Rating {
     public Rating() {
     }
 
-    public Rating(String name, double score) {
+    public Rating(final String name, final double score) {
         this.name = name;
         this.score = score;
     }
 
-    public Rating(String name, double score, double secondScore) {
+    public Rating(final String name, final double score, final double secondScore) {
         this.name = name;
         this.score = score;
         this.secondScore = secondScore;
@@ -23,7 +23,7 @@ public class Rating {
         return secondScore;
     }
 
-    public void setSecondScore(double secondScore) {
+    public void setSecondScore(final double secondScore) {
         this.secondScore = secondScore;
     }
 
@@ -31,7 +31,7 @@ public class Rating {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -39,7 +39,7 @@ public class Rating {
         return score;
     }
 
-    public void setScore(double score) {
+    public void setScore(final double score) {
         this.score = score;
     }
 

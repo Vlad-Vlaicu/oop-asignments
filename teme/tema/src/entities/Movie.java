@@ -1,12 +1,11 @@
 package entities;
 
 import entertainment.Genre;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Movie {
+public final class Movie {
     private int id;
     private String name;
     private int year;
@@ -25,7 +24,7 @@ public class Movie {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
@@ -33,7 +32,7 @@ public class Movie {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -41,7 +40,7 @@ public class Movie {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(final int year) {
         this.year = year;
     }
 
@@ -49,7 +48,7 @@ public class Movie {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(final int duration) {
         this.duration = duration;
     }
 
@@ -57,7 +56,7 @@ public class Movie {
         return genres;
     }
 
-    public void setGenres(List<Genre> genres) {
+    public void setGenres(final List<Genre> genres) {
         this.genres = genres;
     }
 
@@ -65,7 +64,7 @@ public class Movie {
         return cast;
     }
 
-    public void setCast(List<String> cast) {
+    public void setCast(final List<String> cast) {
         this.cast = cast;
     }
 
@@ -73,20 +72,24 @@ public class Movie {
         return ratings;
     }
 
-    public void setRatings(List<Double> ratings) {
+    public void setRatings(final List<Double> ratings) {
         this.ratings = ratings;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Movie movie = (Movie) o;
-        return year == movie.year &&
-                duration == movie.duration &&
-                name.equals(movie.name) &&
-                genres.equals(movie.genres) &&
-                cast.equals(movie.cast);
+        return year == movie.year
+               && duration == movie.duration
+               && name.equals(movie.name)
+               && genres.equals(movie.genres)
+               && cast.equals(movie.cast);
     }
 
     @Override

@@ -7,20 +7,22 @@ import services.MovieService;
 import services.ShowService;
 import services.UserService;
 import utils.SortingUtils;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-public class BestUnseenRecommendation extends Action {
+public final class BestUnseenRecommendation extends Action {
     private String username;
 
-    public BestUnseenRecommendation(int action_id, String action_type) {
-        super(action_id, action_type);
+    public BestUnseenRecommendation(final int actionId, final String actionType) {
+        super(actionId, actionType);
     }
 
     public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
@@ -34,19 +36,19 @@ public class BestUnseenRecommendation extends Action {
         List<Rating> ratings = new ArrayList<>();
 
         showService.getAllShows().stream()
-                .map( s -> new Rating(s.getName(), showService.getRating(s),s.getId()))
+                .map(s -> new Rating(s.getName(), showService.getRating(s), s.getId()))
                 .forEach(ratings::add);
 
         movieService.getAllMovies().stream()
-                .map(s -> new Rating(s.getName(), movieService.getRating(s),s.getId()))
+                .map(s -> new Rating(s.getName(), movieService.getRating(s), s.getId()))
                 .forEach(ratings::add);
 
         SortingUtils.bestRecommSort(ratings);
 
-        Map<String,Integer> history = user.getHistory();
+        Map<String, Integer> history = user.getHistory();
 
-        for( Rating r : ratings){
-            if(!history.containsKey(r.getName())){
+        for (Rating r : ratings) {
+            if (!history.containsKey(r.getName())) {
                 return "BestRatedUnseenRecommendation result: " + r.getName();
             }
         }

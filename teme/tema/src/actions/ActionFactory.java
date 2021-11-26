@@ -3,18 +3,30 @@ package actions;
 import actions.commands.AddToFavoriteCommand;
 import actions.commands.AddToSeenCommand;
 import actions.commands.RateCommand;
-import actions.queries.*;
-import actions.recommendations.*;
+import actions.queries.ActorQuery;
+import actions.queries.MovieQuery;
+import actions.queries.ShowQuery;
+import actions.queries.UserQuery;
+import actions.recommendations.BestUnseenRecommendation;
+import actions.recommendations.PopularRecommendation;
+import actions.recommendations.StandardRecommendation;
+import actions.recommendations.SearchRecommendation;
+import actions.recommendations.FavoriteRecommendation;
 import common.Constants;
 import entertainment.Genre;
 import fileio.ActionInputData;
 import utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-public class ActionFactory {
-    public static List<Action> createActionList(List<ActionInputData> data) {
+public final class ActionFactory {
+
+    private ActionFactory() { }
+
+    /** ActionFactory receives a list of data and creates the specified action classes
+     * @param data is the data parsed into the action type classes
+     * */
+    public static List<Action> createActionList(final List<ActionInputData> data) {
         List<Action> result = new ArrayList<>();
         for (var d : data) {
             Action action = createAction(d);
@@ -23,7 +35,7 @@ public class ActionFactory {
         return result;
     }
 
-    private static Action createAction(ActionInputData data) {
+    private static Action createAction(final ActionInputData data) {
         String actionType = data.getActionType();
         return switch (actionType) {
             case Constants.COMMAND -> createCommand(data);
@@ -33,7 +45,7 @@ public class ActionFactory {
         };
     }
 
-    private static Action createCommand(ActionInputData data) {
+    private static Action createCommand(final ActionInputData data) {
         String commandType = data.getType();
         return switch (commandType) {
             case Constants.FAVORITE -> createFavoriteCommand(data);
@@ -43,9 +55,9 @@ public class ActionFactory {
         };
     }
 
-    private static Action createQuery(ActionInputData data) {
+    private static Action createQuery(final ActionInputData data) {
         String objectType = data.getObjectType();
-        return switch (objectType){
+        return switch (objectType) {
             case Constants.ACTORS -> createActorQuery(data);
             case Constants.MOVIES -> createMovieQuery(data);
             case Constants.SHOWS -> createShowQuery(data);
@@ -54,7 +66,7 @@ public class ActionFactory {
         };
     }
 
-    private static Action createRecommendation(ActionInputData data) {
+    private static Action createRecommendation(final ActionInputData data) {
         String recommendationType = data.getType();
         return switch (recommendationType) {
             case Constants.STANDARD -> createStandardRecomm(data);
@@ -66,28 +78,28 @@ public class ActionFactory {
         };
     }
 
-    private static Action createFavoriteCommand(ActionInputData data){
+    private static Action createFavoriteCommand(final ActionInputData data) {
         int id = data.getActionId();
         String actionType = data.getActionType();
-        AddToFavoriteCommand command = new AddToFavoriteCommand(id,actionType);
+        AddToFavoriteCommand command = new AddToFavoriteCommand(id, actionType);
         command.setUser(data.getUsername());
         command.setTitle(data.getTitle());
         return command;
     }
 
-    private static Action createSeenCommand(ActionInputData data){
+    private static Action createSeenCommand(final ActionInputData data) {
         int id = data.getActionId();
         String actionType = data.getActionType();
-        AddToSeenCommand command = new AddToSeenCommand(id,actionType);
+        AddToSeenCommand command = new AddToSeenCommand(id, actionType);
         command.setUser(data.getUsername());
         command.setTitle(data.getTitle());
         return command;
     }
 
-    private static Action createRatingCommand(ActionInputData data){
+    private static Action createRatingCommand(final ActionInputData data) {
         int id = data.getActionId();
         String actionType = data.getActionType();
-        RateCommand command = new RateCommand(id,actionType);
+        RateCommand command = new RateCommand(id, actionType);
         command.setUser(data.getUsername());
         command.setTitle(data.getTitle());
         command.setGrade(data.getGrade());
@@ -95,13 +107,15 @@ public class ActionFactory {
         return command;
     }
 
-    private static Action createActorQuery(ActionInputData data){
+    private static Action createActorQuery(final ActionInputData data) {
         int id = data.getActionId();
+        int keywordsIndex = 2;
+        int awardsIndex = keywordsIndex + 1;
         String actionType = data.getActionType();
-        List<String> keywords = data.getFilters().get(2);
-        List<String> awards = data.getFilters().get(3);
+        List<String> keywords = data.getFilters().get(keywordsIndex);
+        List<String> awards = data.getFilters().get(awardsIndex);
 
-        ActorQuery query = new ActorQuery(id,actionType);
+        ActorQuery query = new ActorQuery(id, actionType);
         query.setObjectType(data.getObjectType());
         query.setSortType(data.getSortType());
         query.setCriteria(data.getCriteria());
@@ -112,53 +126,53 @@ public class ActionFactory {
         return query;
     }
 
-    private static Action createMovieQuery(ActionInputData data){
+    private static Action createMovieQuery(final ActionInputData data) {
         int id = data.getActionId();
         String actionType = data.getActionType();
         List<String> yearFilter = data.getFilters().get(0);
         List<String> genreFilter = data.getFilters().get(1);
 
-        MovieQuery query = new MovieQuery(id,actionType);
+        MovieQuery query = new MovieQuery(id, actionType);
         query.setObjectType(data.getObjectType());
         query.setSortType(data.getSortType());
         query.setCriteria(data.getCriteria());
         query.setLimit(data.getNumber());
 
-        if(yearFilter.get(0) != null){
+        if (yearFilter.get(0) != null) {
             int year = Integer.parseInt(yearFilter.get(0));
             query.setYear(year);
         }
-        if(genreFilter.get(0) != null){
+        if (genreFilter.get(0) != null) {
             Genre genre = Utils.stringToGenre(genreFilter.get(0));
             query.setGenre(genre);
         }
         return query;
     }
 
-    private static Action createShowQuery(ActionInputData data){
+    private static Action createShowQuery(final ActionInputData data) {
         int id = data.getActionId();
         String actionType = data.getActionType();
         List<String> yearFilter = data.getFilters().get(0);
         List<String> genreFilter = data.getFilters().get(1);
 
-        ShowQuery query = new ShowQuery(id,actionType);
+        ShowQuery query = new ShowQuery(id, actionType);
         query.setObjectType(data.getObjectType());
         query.setSortType(data.getSortType());
         query.setCriteria(data.getCriteria());
         query.setLimit(data.getNumber());
 
-        if(yearFilter.get(0) != null){
+        if (yearFilter.get(0) != null) {
             int year = Integer.parseInt(yearFilter.get(0));
             query.setYear(year);
         }
-        if(genreFilter.get(0) != null){
+        if (genreFilter.get(0) != null) {
             Genre genre = Utils.stringToGenre(genreFilter.get(0));
             query.setGenre(genre);
         }
         return query;
     }
 
-    private static Action createUserQuery(ActionInputData data){
+    private static Action createUserQuery(final ActionInputData data) {
         int id = data.getActionId();
         String actionType = data.getActionType();
 
@@ -170,25 +184,25 @@ public class ActionFactory {
         return query;
     }
 
-    private static Action createStandardRecomm(ActionInputData data){
+    private static Action createStandardRecomm(final ActionInputData data) {
         int id = data.getActionId();
         String actionType = data.getActionType();
 
-        StandardRecommendation recomm = new StandardRecommendation(id,actionType);
+        StandardRecommendation recomm = new StandardRecommendation(id, actionType);
         recomm.setUsername(data.getUsername());
         return recomm;
     }
 
-    private static Action createBestUnseenRecomm(ActionInputData data){
+    private static Action createBestUnseenRecomm(final ActionInputData data) {
         int id = data.getActionId();
         String actionType = data.getActionType();
 
-        BestUnseenRecommendation recomm = new BestUnseenRecommendation(id,actionType);
+        BestUnseenRecommendation recomm = new BestUnseenRecommendation(id, actionType);
         recomm.setUsername(data.getUsername());
         return recomm;
     }
 
-    private static Action createPopularRecomm(ActionInputData data){
+    private static Action createPopularRecomm(final ActionInputData data) {
         int id = data.getActionId();
         String actionType = data.getActionType();
 
@@ -197,7 +211,7 @@ public class ActionFactory {
         return recomm;
     }
 
-    private static Action createFavoriteRecomm(ActionInputData data){
+    private static Action createFavoriteRecomm(final ActionInputData data) {
         int id = data.getActionId();
         String actionType = data.getActionType();
 
@@ -206,11 +220,10 @@ public class ActionFactory {
         return recomm;
     }
 
-    private static Action createSearchRecomm(ActionInputData data){
+    private static Action createSearchRecomm(final ActionInputData data) {
         int id = data.getActionId();
         String actionType = data.getActionType();
-        SearchRecommendation recomm = new SearchRecommendation(id,actionType);
-        List<List<String>> filters = data.getFilters();
+        SearchRecommendation recomm = new SearchRecommendation(id, actionType);
         Genre genre = Utils.stringToGenre(data.getGenre());
         recomm.setGenre(genre);
         recomm.setUsername(data.getUsername());

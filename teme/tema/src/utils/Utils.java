@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 
 /**
  * The class contains static methods that helps with parsing.
- *
+ * <p>
  * We suggest you add your static methods here or in a similar class.
  */
 public final class Utils {
@@ -26,6 +26,7 @@ public final class Utils {
 
     /**
      * Transforms a string into an enum
+     *
      * @param genre of video
      * @return an Genre Enum
      */
@@ -57,6 +58,7 @@ public final class Utils {
 
     /**
      * Transforms a string into an enum
+     *
      * @param award for actors
      * @return an ActorsAwards Enum
      */
@@ -73,6 +75,7 @@ public final class Utils {
 
     /**
      * Transforms an array of JSON's into an array of strings
+     *
      * @param array of JSONs
      * @return a list of strings
      */
@@ -90,6 +93,7 @@ public final class Utils {
 
     /**
      * Transforms an array of JSON's into a map
+     *
      * @param jsonActors array of JSONs
      * @return a map with ActorsAwardsa as key and Integer as value
      */
@@ -107,6 +111,7 @@ public final class Utils {
 
     /**
      * Transforms an array of JSON's into a map
+     *
      * @param movies array of JSONs
      * @return a map with String as key and Integer as value
      */
@@ -126,37 +131,49 @@ public final class Utils {
         return mapVideos;
     }
 
-    public static Subscription stringToSubscription(final String s){
-        return switch (s){
+    /** Transforms a String into Subscription
+     * @param s is the string to be transformed
+     * @return the Subscription that matches the string
+     * */
+    public static Subscription stringToSubscription(final String s) {
+        return switch (s) {
             case "BASIC" -> Subscription.BASIC;
 
             default -> Subscription.PREMIUM;
         };
     }
 
-    public static String createQueryResult(List<String> items){
+    /** method creates a String template for the query results
+     * @param items a list of results from the queries
+     * @return a string that formats the results
+     * */
+    public static String createQueryResult(final List<String> items) {
         int size = items.size();
         StringBuilder result = new StringBuilder("Query result: [");
-        if(size != 0){
-            for(int i = 0; i < size - 1; i++){
+        if (size != 0) {
+            for (int i = 0; i < size - 1; i++) {
                 result.append(items.get(i));
                 result.append(", ");
             }
-            result.append(items.get(size-1));
+            result.append(items.get(size - 1));
         }
         result.append("]");
         return result.toString();
     }
 
-    public static String createSearchRecommResult(List<String> items){
+    /** method creates a String template for the SearchRecommendation results
+     * @param items a list of results from the searchRecommendation
+     * @return a string that formats the results
+     * */
+    public static String createSearchRecommResult(final List<String> items) {
         int size = items.size();
         StringBuilder result = new StringBuilder("SearchRecommendation result: [");
-        if(size != 0){
-            for(int i = 0; i < size - 1; i++){
+        if (size != 0) {
+            for (int i = 0; i < size - 1; i++) {
                 result.append(items.get(i));
                 result.append(", ");
             }
-            result.append(items.get(size-1));
+            result.append(items.get(size - 1));
         }
         result.append("]");
         return result.toString();

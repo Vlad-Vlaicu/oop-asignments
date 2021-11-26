@@ -2,16 +2,20 @@ package entities;
 
 import entertainment.Subscription;
 
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
-public class User {
+
+public final class User {
     private int id;
     private String username;
     private Subscription subscription;
-    private Map<String,Integer> history;
+    private Map<String, Integer> history;
     private List<String> favouriteList;
-    private Map<String,Double> ratings;
+    private Map<String, Double> ratings;
 
     public User() {
         history = new HashMap<>();
@@ -23,7 +27,7 @@ public class User {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
@@ -31,7 +35,7 @@ public class User {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(final String username) {
         this.username = username;
     }
 
@@ -39,7 +43,7 @@ public class User {
         return subscription;
     }
 
-    public void setSubscription(Subscription subscription) {
+    public void setSubscription(final Subscription subscription) {
         this.subscription = subscription;
     }
 
@@ -47,7 +51,7 @@ public class User {
         return history;
     }
 
-    public void setHistory(Map<String, Integer> history) {
+    public void setHistory(final Map<String, Integer> history) {
         this.history = history;
     }
 
@@ -55,7 +59,7 @@ public class User {
         return favouriteList;
     }
 
-    public void setFavouriteList(List<String> favouriteList) {
+    public void setFavouriteList(final List<String> favouriteList) {
         this.favouriteList = favouriteList;
     }
 
@@ -63,17 +67,21 @@ public class User {
         return ratings;
     }
 
-    public void setRatings(Map<String, Double> ratings) {
+    public void setRatings(final Map<String, Double> ratings) {
         this.ratings = ratings;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         User user = (User) o;
-        return username.equals(user.username) &&
-                subscription == user.subscription;
+        return username.equals(user.username)
+               && subscription == user.subscription;
     }
 
     @Override

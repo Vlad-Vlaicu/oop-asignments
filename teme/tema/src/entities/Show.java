@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Show {
+public final class Show {
     private int id;
     private String name;
     private int year;
@@ -25,7 +25,7 @@ public class Show {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(final int id) {
         this.id = id;
     }
 
@@ -33,7 +33,7 @@ public class Show {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -41,7 +41,7 @@ public class Show {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(final int year) {
         this.year = year;
     }
 
@@ -49,7 +49,7 @@ public class Show {
         return cast;
     }
 
-    public void setCast(List<String> cast) {
+    public void setCast(final List<String> cast) {
         this.cast = cast;
     }
 
@@ -57,7 +57,7 @@ public class Show {
         return genres;
     }
 
-    public void setGenres(List<Genre> genres) {
+    public void setGenres(final List<Genre> genres) {
         this.genres = genres;
     }
 
@@ -65,7 +65,7 @@ public class Show {
         return numberOfSeasons;
     }
 
-    public void setNumberOfSeasons(int numberOfSeasons) {
+    public void setNumberOfSeasons(final int numberOfSeasons) {
         this.numberOfSeasons = numberOfSeasons;
     }
 
@@ -73,21 +73,25 @@ public class Show {
         return seasons;
     }
 
-    public void setSeasons(List<Season> seasons) {
+    public void setSeasons(final List<Season> seasons) {
         this.seasons = seasons;
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Show show = (Show) o;
-        return year == show.year &&
-                numberOfSeasons == show.numberOfSeasons &&
-                name.equals(show.name) &&
-                cast.equals(show.cast) &&
-                genres.equals(show.genres) &&
-                Objects.equals(seasons, show.seasons);
+        return year == show.year
+               && numberOfSeasons == show.numberOfSeasons
+               && name.equals(show.name)
+               && cast.equals(show.cast)
+               && genres.equals(show.genres)
+               && Objects.equals(seasons, show.seasons);
     }
 
     @Override
