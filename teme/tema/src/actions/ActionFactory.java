@@ -11,6 +11,7 @@ import fileio.ActionInputData;
 import utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ActionFactory {
     public static List<Action> createActionList(List<ActionInputData> data) {
@@ -123,11 +124,11 @@ public class ActionFactory {
         query.setCriteria(data.getCriteria());
         query.setLimit(data.getNumber());
 
-        if(!yearFilter.isEmpty()){
+        if(yearFilter.get(0) != null){
             int year = Integer.parseInt(yearFilter.get(0));
             query.setYear(year);
         }
-        if(!genreFilter.isEmpty()){
+        if(genreFilter.get(0) != null){
             Genre genre = Utils.stringToGenre(genreFilter.get(0));
             query.setGenre(genre);
         }
@@ -146,11 +147,11 @@ public class ActionFactory {
         query.setCriteria(data.getCriteria());
         query.setLimit(data.getNumber());
 
-        if(!yearFilter.isEmpty()){
+        if(yearFilter.get(0) != null){
             int year = Integer.parseInt(yearFilter.get(0));
             query.setYear(year);
         }
-        if(!genreFilter.isEmpty()){
+        if(genreFilter.get(0) != null){
             Genre genre = Utils.stringToGenre(genreFilter.get(0));
             query.setGenre(genre);
         }
@@ -208,12 +209,12 @@ public class ActionFactory {
     private static Action createSearchRecomm(ActionInputData data){
         int id = data.getActionId();
         String actionType = data.getActionType();
-        List<String> genres = data.getFilters().get(1);
-        Genre genre = Utils.stringToGenre(genres.get(0));
-
         SearchRecommendation recomm = new SearchRecommendation(id,actionType);
-        recomm.setUsername(data.getUsername());
+        List<List<String>> filters = data.getFilters();
+        Genre genre = Utils.stringToGenre(data.getGenre());
         recomm.setGenre(genre);
+        recomm.setUsername(data.getUsername());
+
         return recomm;
     }
 

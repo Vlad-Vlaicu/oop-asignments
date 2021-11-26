@@ -4,13 +4,11 @@ import common.Constants;
 import entertainment.Genre;
 import entertainment.Rating;
 import entities.Movie;
-import entities.Show;
 import entities.User;
 import services.MovieService;
-import services.ShowService;
 import services.UserService;
+import utils.SortingUtils;
 import utils.Utils;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,34 +45,45 @@ public class MovieQuery extends Query {
         String criteria = this.getCriteria();
         int limit = this.getLimit();
         List<String> videos = switch (criteria) {
-            case Constants.RATING -> getMoviesByRating();
+            case Constants.RATINGS -> getMoviesByRating();
             case Constants.FAVORITE -> getMoviesByFavorite();
             case Constants.LONGEST -> getMoviesByLength();
             case Constants.MOSTVIEWED -> getMoviesByViews();
             default -> new ArrayList<>();
         };
 
-        String sortType = this.getSortType();
-        if (Constants.DESC.equals(sortType)) {
-            Collections.reverse(videos);
-        }
-
         videos = applyFilters(videos);
 
         if (limit != 0 && limit < videos.size()) {
-            videos = videos.subList(0, limit - 1);
+            videos = videos.subList(0, limit);
         }
         return Utils.createQueryResult(videos);
     }
 
     private List<String> applyFilters(List<String> videos) {
         MovieService movieService = new MovieService();
-        return videos.stream()
-                .map(movieService::findMovieByTitle)
-                .filter(s -> s.getGenres().contains(genre))
-                .filter(s -> s.getYear() == year)
-                .map(Movie::getName)
-                .collect(Collectors.toList());
+        List<String> result = new ArrayList<>();
+        for(String v : videos){
+            Optional<Movie> movieBox = Optional.ofNullable(movieService.findMovieByTitle(v));
+            if(movieBox.isPresent()){
+                Movie movie = movieBox.get();
+                boolean isEligible = true;
+                if(year != 0){
+                    if(movie.getYear() != year){
+                        isEligible = false;
+                    }
+                }
+                if(genre != null){
+                    if(!movie.getGenres().contains(genre)){
+                        isEligible = false;
+                    }
+                }
+                if(isEligible){
+                    result.add(movie.getName());
+                }
+            }
+        }
+        return result;
     }
 
     private List<String> getMoviesByViews() {
@@ -93,19 +102,13 @@ public class MovieQuery extends Query {
 
                 });
 
-        List<String> res = map.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
+        List<Rating> movies = map.entrySet().stream()
+                .map(s -> new Rating(s.getKey(),s.getValue()))
                 .collect(Collectors.toList());
 
-        for (String s : res) {
-            Optional<Movie> optionalMovie = Optional.ofNullable(movieService.findMovieByTitle(s));
-            if (optionalMovie.isEmpty()) {
-                res.remove(s);
-            }
-        }
+        SortingUtils.videoMostViews(movies,this.getSortType());
 
-        return res;
+        return movies.stream().map(Rating::getName).collect(Collectors.toList());
     }
 
     private List<String> getMoviesByLength() {
@@ -114,17 +117,15 @@ public class MovieQuery extends Query {
                 .map(s -> new Rating(s.getName(), s.getDuration()))
                 .collect(Collectors.toList());
 
-        List<String> res = list.stream()
-                .sorted(Comparator.comparingDouble(Rating::getScore))
+        SortingUtils.videoLongest(list,this.getSortType());
+
+        return list.stream()
                 .map(Rating::getName)
                 .collect(Collectors.toList());
-
-        return res;
     }
 
     private List<String> getMoviesByFavorite() {
         UserService userService = new UserService();
-        MovieService movieService = new MovieService();
         HashMap<String, Integer> map = new HashMap<>();
         userService.getAllUsers().stream()
                 .map(User::getFavouriteList)
@@ -138,32 +139,25 @@ public class MovieQuery extends Query {
 
                 });
 
-        List<String> res = map.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
+        List<Rating> movies = map.entrySet().stream()
+                .map(s -> new Rating(s.getKey(),s.getValue()))
                 .collect(Collectors.toList());
 
-        for (String s : res) {
-            Optional<Movie> optionalMovie = Optional.ofNullable(movieService.findMovieByTitle(s));
-            if (optionalMovie.isEmpty()) {
-                res.remove(s);
-            }
-        }
+        SortingUtils.videoFavorite(movies,this.getSortType());
 
-        return res;
+        return movies.stream().map(s -> s.getName()).collect(Collectors.toList());
     }
 
     private List<String> getMoviesByRating() {
         MovieService movieService = new MovieService();
         List<Rating> list = movieService.getAllMovies().stream()
                 .map(s -> new Rating(s.getName(), movieService.getRating(s)))
+                .filter(s -> s.getScore() != 0)
                 .collect(Collectors.toList());
 
-        List<String> res = list.stream()
+        return list.stream()
                 .sorted(Comparator.comparingDouble(Rating::getScore))
                 .map(Rating::getName)
                 .collect(Collectors.toList());
-
-        return res;
     }
 }

@@ -4,6 +4,7 @@ import common.Constants;
 import entertainment.Rating;
 import entities.User;
 import services.UserService;
+import utils.SortingUtils;
 import utils.Utils;
 
 import java.util.ArrayList;
@@ -29,12 +30,8 @@ public class UserQuery extends Query{
             default -> new ArrayList<>();
         };
 
-        if (Constants.DESC.equals(sortType)) {
-            Collections.reverse(users);
-        }
-
         if (limit != 0 && limit < users.size()) {
-            users = users.subList(0, limit - 1);
+            users = users.subList(0, limit);
         }
         return Utils.createQueryResult(users);
 
@@ -42,11 +39,12 @@ public class UserQuery extends Query{
 
     private List<String> getUsersByRatings() {
         UserService userService = new UserService();
-        List<String> result = userService.getAllUsers().stream()
+        List<Rating> result = userService.getAllUsers().stream()
                 .map(s -> new Rating(s.getUsername(),s.getRatings().size()))
-                .sorted(Comparator.comparingDouble(Rating::getScore))
-                .map(Rating::getName)
+                .filter(rating -> rating.getScore() != 0)
                 .collect(Collectors.toList());
-        return result;
+        SortingUtils.userQuery(result,getSortType());
+
+        return result.stream().map(Rating::getName).collect(Collectors.toList());
     }
 }

@@ -40,7 +40,7 @@ public class AddToFavoriteCommand extends Action {
             return "error -> no user found";
         }
 
-        boolean wasSeen = service.wasMovieSeen(title, user);
+        boolean wasSeen = service.wasVideoSeen(title, user);
         if(!wasSeen){
             return "error -> " + title + " is not seen";
         }

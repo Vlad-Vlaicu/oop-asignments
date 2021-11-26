@@ -10,6 +10,7 @@ import entities.Show;
 import fileio.ActorInputData;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -97,19 +98,19 @@ public class ActorService {
                 }
             }
         }
+        if(videos == 0){
+            return 0;
+        }
         return score / (double)videos;
     }
 
-    public int getActorPrestigeStrict(Actor actor, List<ActorsAwards> awards){
-        int awardsCount = 0;
+    public boolean doesActorHaveAllAwards(Actor actor, List<ActorsAwards> awards){
         for(ActorsAwards award : awards){
-            if(actor.getAwards().containsKey(award)){
-                awardsCount += actor.getAwards().get(award);
-            }else
-                return 0;
-
+            if(!actor.getAwards().containsKey(award)){
+               return false;
+            }
         }
-        return awardsCount;
+        return true;
     }
 
     public boolean doesActorHaveDescription(Actor actor, List<String> keywords){
@@ -124,6 +125,11 @@ public class ActorService {
 
         }
         return isEligibe;
+    }
+
+    public int getCountAwards(Actor a){
+        Map<ActorsAwards, Integer> awards = a.getAwards();
+        return awards.values().stream().mapToInt(s -> s).sum();
     }
 
 }

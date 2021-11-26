@@ -70,6 +70,8 @@ public class RateCommand extends Action {
         Optional<User> userBox = Optional.ofNullable(user);
         Optional<Movie> movieBox = Optional.ofNullable(movie);
 
+
+
         if(userBox.isEmpty()){
             return "error -> user not found";
         }
@@ -77,10 +79,14 @@ public class RateCommand extends Action {
         if(movieBox.isEmpty()){
             return "error -> movie not found";
         }
+        boolean isMovieSeen = userService.wasVideoSeen(title,user);
+        if(!isMovieSeen){
+            return "error -> " + title + " is not seen";
+        }
 
         boolean isRated = userService.isMovieRatedByUser(this.title,user);
         if(isRated){
-            return "error -> movie already rated by user " + user.getUsername();
+            return "error -> " + title + " has been already rated";
         }
         userService.rateMovie(this.title, this.grade, user);
         movieService.rateMovie(this.grade, movie);
@@ -104,6 +110,11 @@ public class RateCommand extends Action {
 
         if(showBox.isEmpty()){
             return "error -> show not found";
+        }
+
+        boolean isShowSeen = userService.wasVideoSeen(title,user);
+        if(!isShowSeen){
+            return "error -> " + title + " is not seen";
         }
 
         boolean isRated = userService.isShowRatedByUser(this.title, this.currentSeason, user);

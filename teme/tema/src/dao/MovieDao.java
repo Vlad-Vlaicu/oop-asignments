@@ -28,7 +28,7 @@ public class MovieDao implements Dao<Movie>{
 
     @Override
     public void save(Movie movie) {
-        AtomicInteger idHolder = database.getIdMovieHolder();
+        AtomicInteger idHolder = database.getIdVideoHolder();
         int id = idHolder.getAndIncrement();
         movie.setId(id);
         List<Movie> list = getAll();

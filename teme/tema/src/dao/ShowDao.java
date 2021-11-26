@@ -28,7 +28,7 @@ public class ShowDao implements Dao<Show>{
 
     @Override
     public void save(Show show) {
-        AtomicInteger idHolder = database.getIdShowHolder();
+        AtomicInteger idHolder = database.getIdVideoHolder();
         int id = idHolder.getAndIncrement();
         show.setId(id);
         List<Show> list = getAll();

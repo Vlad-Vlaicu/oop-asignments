@@ -16,6 +16,7 @@ public class User {
     public User() {
         history = new HashMap<>();
         favouriteList = new ArrayList<>();
+        ratings = new HashMap<>();
     }
 
     public int getId() {

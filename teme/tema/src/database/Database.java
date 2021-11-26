@@ -15,8 +15,7 @@ public class Database {
     private List<Show> shows;
     private List<User> users;
     private AtomicInteger idActorHolder;
-    private AtomicInteger idMovieHolder;
-    private AtomicInteger idShowHolder;
+    private AtomicInteger idVideoHolder;
     private AtomicInteger idUserHolder;
 
     private Database(){
@@ -25,8 +24,7 @@ public class Database {
         shows = new LinkedList<>();
         users = new LinkedList<>();
         idActorHolder = new AtomicInteger(1);
-        idMovieHolder = new AtomicInteger(1);
-        idShowHolder = new AtomicInteger(1);
+        idVideoHolder = new AtomicInteger(1);
         idUserHolder = new AtomicInteger(1);
     };
 
@@ -58,12 +56,8 @@ public class Database {
         return idActorHolder;
     }
 
-    public AtomicInteger getIdMovieHolder() {
-        return idMovieHolder;
-    }
-
-    public AtomicInteger getIdShowHolder() {
-        return idShowHolder;
+    public AtomicInteger getIdVideoHolder() {
+        return idVideoHolder;
     }
 
     public AtomicInteger getIdUserHolder() {
@@ -93,7 +87,6 @@ public class Database {
         dropShows();
         idUserHolder.set(1);
         idActorHolder.set(1);
-        idShowHolder.set(1);
-        idMovieHolder.set(1);
+        idVideoHolder.set(1);
     }
 }

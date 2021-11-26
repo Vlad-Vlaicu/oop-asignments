@@ -5,12 +5,10 @@ import entertainment.ActorsAwards;
 import entertainment.Rating;
 import entities.Actor;
 import services.ActorService;
+import utils.SortingUtils;
 import utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ActorQuery extends Query{
@@ -36,6 +34,7 @@ public class ActorQuery extends Query{
     }
 
     public void setAwardsFilter(List<String> awardsFilter) {
+        if(awardsFilter != null)
         this.awardsFilter = awardsFilter.stream()
                 .map(Utils::stringToAwards)
                 .collect(Collectors.toList());
@@ -53,7 +52,7 @@ public class ActorQuery extends Query{
         };
 
         if(limit != 0 && limit < actors.size()){
-            actors = actors.subList(0, limit-1);
+            actors = actors.subList(0, limit);
         }
 
         return Utils.createQueryResult(actors);
@@ -66,10 +65,12 @@ public class ActorQuery extends Query{
         for(Actor a : actors){
             double actorRating = actorService.getRating(a);
             Rating r = new Rating(a.getName(),actorRating);
+            if(r.getScore() != 0)
             ratings.add(r);
         }
-
-        return sortActorsByRatings(ratings);
+        SortingUtils.avergActor(ratings,getSortType());
+        List<String> result = ratings.stream().map(Rating::getName).collect(Collectors.toList());
+        return result;
     }
 
     private List<String> getActorsByAwards(){
@@ -77,44 +78,53 @@ public class ActorQuery extends Query{
         List<Actor> actors = actorService.getAllActors();
         List<Rating> ratings = new ArrayList<>();
         for(Actor a: actors){
-            int relevantAwards = actorService.getActorPrestigeStrict(a, awardsFilter);
-            if(relevantAwards != 0){
-                Rating rating = new Rating(a.getName(),relevantAwards);
-                ratings.add(rating);
-            }
+           boolean isEligible = actorService.doesActorHaveAllAwards(a,awardsFilter);
+           if(isEligible) {
+               Rating r = new Rating(a.getName(), actorService.getCountAwards(a));
+               ratings.add(r);
+           }
         }
-        return sortActorsByRatings(ratings);
-    }
+        SortingUtils.awardActor(ratings,getSortType());
 
-    private List<String> sortActorsByRatings(List<Rating> ratings) {
-        String sortType = this.getSortType();
-        if (Constants.DESC.equals(sortType)) {
-            ratings.sort(Comparator.comparing(Rating::getScore).reversed());
-        } else {
-            ratings.sort(Comparator.comparing(Rating::getScore));
-        }
-
-        return ratings.stream()
-                .map(Rating::getName)
-                .collect(Collectors.toList());
+        return ratings.stream().map(Rating::getName).collect(Collectors.toList());
     }
 
     private List<String> sortActorsByName(List<String> names) {
         String sortType = this.getSortType();
-        names = names.stream().sorted().collect(Collectors.toList());
+        List<String> result = names.stream().sorted().collect(Collectors.toList());
         if (Constants.DESC.equals(sortType)) {
-           Collections.reverse(names);
+           Collections.reverse(result);
         }
-        return names;
+        return result;
     }
 
     private List<String> getActorsByDescription(){
         ActorService actorService = new ActorService();
         List<Actor> actors = actorService.getAllActors();
-        List<String> names = actors.stream()
-                .map(Actor::getName)
-                .collect(Collectors.toList());
-        names = sortActorsByName(names);
-        return names;
+        List<String> result = new ArrayList<>();
+        for(Actor a : actors){
+
+            /*
+            boolean isEligible = true;
+            String description = a.getCareer_description().toLowerCase();
+            for(String s : keywordsFilter){
+                if(!description.contains(s)){
+                    isEligible = false;
+                }
+            }
+            if(isEligible){
+                result.add(a.getName());
+            }
+            */
+            List<String> descriptionWords = Arrays.asList(a.getCareer_description().replaceAll("[^a-zA-Z ]", " ").toLowerCase().split("\\s+"));
+            descriptionWords = descriptionWords.stream().distinct().collect(Collectors.toList());
+            Collections.sort(descriptionWords);
+            if(descriptionWords.containsAll(keywordsFilter)){
+                result.add(a.getName());
+            }
+        }
+
+        result = sortActorsByName(result);
+        return result;
     }
 }

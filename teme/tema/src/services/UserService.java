@@ -84,7 +84,7 @@ public class UserService {
         return true;
     }
 
-    public boolean wasMovieSeen(String title, User user){
+    public boolean wasVideoSeen(String title, User user){
         var history = user.getHistory();
         return history.containsKey(title);
     }

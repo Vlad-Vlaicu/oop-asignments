@@ -115,6 +115,6 @@ public class ShowService {
                         .filter(s -> s.getName().equals(name))
                         .findFirst();
 
-        return optional.get();
+        return optional.orElse(null);
     }
 }

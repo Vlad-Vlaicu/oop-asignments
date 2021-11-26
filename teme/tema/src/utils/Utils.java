@@ -51,7 +51,7 @@ public final class Utils {
             case "kids" -> Genre.KIDS;
             case "western" -> Genre.WESTERN;
             case "tv movie" -> Genre.TV_MOVIE;
-            default -> null;
+            default -> Genre.ERROR;
         };
     }
 
@@ -146,5 +146,20 @@ public final class Utils {
         }
         result.append("]");
         return result.toString();
+    }
+
+    public static String createSearchRecommResult(List<String> items){
+        int size = items.size();
+        StringBuilder result = new StringBuilder("SearchRecommendation result: [");
+        if(size != 0){
+            for(int i = 0; i < size - 1; i++){
+                result.append(items.get(i));
+                result.append(", ");
+            }
+            result.append(items.get(size-1));
+        }
+        result.append("]");
+        return result.toString();
+
     }
 }

@@ -3,10 +3,13 @@ package actions.queries;
 import common.Constants;
 import entertainment.Genre;
 import entertainment.Rating;
+import entities.Movie;
 import entities.Show;
 import entities.User;
+import services.MovieService;
 import services.ShowService;
 import services.UserService;
+import utils.SortingUtils;
 import utils.Utils;
 
 import java.util.*;
@@ -45,17 +48,12 @@ public class ShowQuery extends Query {
         String criteria = this.getCriteria();
         int limit = this.getLimit();
         List<String> videos = switch (criteria) {
-            case Constants.RATING -> getShowsByRating();
+            case Constants.RATINGS -> getShowsByRating();
             case Constants.FAVORITE -> getShowsByFavorite();
             case Constants.LONGEST -> getShowsByLength();
             case Constants.MOSTVIEWED -> getShowsByViews();
             default -> new ArrayList<>();
         };
-
-        String sortType = this.getSortType();
-        if (Constants.DESC.equals(sortType)) {
-            Collections.reverse(videos);
-        }
 
         videos = applyFilters(videos);
 
@@ -68,13 +66,28 @@ public class ShowQuery extends Query {
 
     private List<String> applyFilters(List<String> videos) {
         ShowService showService = new ShowService();
-        return videos.stream()
-                .map(showService::getShowByName)
-                .filter(s -> s.getGenres().contains(genre))
-                .filter(s -> s.getYear() == year)
-                .map(Show::getName)
-                .collect(Collectors.toList());
-
+        List<String> result = new ArrayList<>();
+        for(String v : videos){
+            Optional<Show> showBox = Optional.ofNullable(showService.getShowByName(v));
+            if(showBox.isPresent()){
+                Show show = showBox.get();
+                boolean isEligible = true;
+                if(year != 0){
+                    if(show.getYear() != year){
+                        isEligible = false;
+                    }
+                }
+                if(genre != null){
+                    if(!show.getGenres().contains(genre)){
+                        isEligible = false;
+                    }
+                }
+                if(isEligible){
+                    result.add(show.getName());
+                }
+            }
+        }
+        return result;
     }
 
     private List<String> getShowsByViews() {
@@ -93,19 +106,15 @@ public class ShowQuery extends Query {
 
                 });
 
-        List<String> res = map.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
+        List<Rating> shows = map.entrySet().stream()
+                .map(s -> new Rating(s.getKey(),s.getValue()))
                 .collect(Collectors.toList());
 
-        for (String s : res){
-            Optional<Show> optionalShow = Optional.ofNullable(showService.getShowByName(s));
-            if(optionalShow.isEmpty()){
-                res.remove(s);
-            }
-        }
+        SortingUtils.videoMostViews(shows,this.getSortType());
 
-        return res;
+        List<String> result = shows.stream().map(Rating::getName).collect(Collectors.toList());
+
+        return result;
     }
 
     private List<String> getShowsByLength() {
@@ -114,10 +123,12 @@ public class ShowQuery extends Query {
                 .map(s -> new Rating(s.getName(), showService.getShowLength(s)))
                 .collect(Collectors.toList());
 
+        SortingUtils.videoLongest(list, this.getSortType());
+
         List<String> res = list.stream()
-                .sorted(Comparator.comparingDouble(Rating::getScore))
                 .map(Rating::getName)
                 .collect(Collectors.toList());
+
 
         return res;
     }
@@ -138,31 +149,32 @@ public class ShowQuery extends Query {
 
                 });
 
-        List<String> res = map.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
+        List<Rating> shows = map.entrySet().stream()
+                .map(s -> new Rating(s.getKey(),s.getValue()))
                 .collect(Collectors.toList());
 
-        for (String s : res){
-            Optional<Show> optionalShow = Optional.ofNullable(showService.getShowByName(s));
-            if(optionalShow.isEmpty()){
-                res.remove(s);
-            }
-        }
+        SortingUtils.videoFavorite(shows,this.getSortType());
 
-        return res;
+        List<String> result = shows.stream().map(Rating::getName).collect(Collectors.toList());
+
+        return result;
     }
 
     private List<String> getShowsByRating() {
         ShowService showService = new ShowService();
         List<Rating> list = showService.getAllShows().stream()
                 .map(s -> new Rating(s.getName(), showService.getRating(s)))
+                .filter(s -> s.getScore() != 0)
                 .collect(Collectors.toList());
 
         List<String> res = list.stream()
                 .sorted(Comparator.comparingDouble(Rating::getScore))
                 .map(Rating::getName)
                 .collect(Collectors.toList());
+
+        if(this.getSortType().equals(Constants.DESC)){
+            Collections.reverse(res);
+        }
 
         return res;
     }
