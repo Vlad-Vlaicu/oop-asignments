@@ -54,27 +54,24 @@ public final class RateCommand extends Action {
 
     @Override
     public String execute() {
-        if (currentSeason == 0) {
-            return rateMovie();
-        }
-        return rateShow();
-    }
-
-    private String rateMovie() {
         UserService userService = new UserService();
-        MovieService movieService = new MovieService();
-
         User user = userService.findUserByName(this.user);
-        Movie movie = movieService.findMovieByTitle(this.title);
-
         Optional<User> userBox = Optional.ofNullable(user);
-        Optional<Movie> movieBox = Optional.ofNullable(movie);
-
-
-
         if (userBox.isEmpty()) {
             return "error -> user not found";
         }
+        if (currentSeason == 0) {
+            return rateMovie(user);
+        }
+        return rateShow(user);
+    }
+
+    private String rateMovie(final User user) {
+        UserService userService = new UserService();
+        MovieService movieService = new MovieService();
+
+        Movie movie = movieService.findMovieByTitle(this.title);
+        Optional<Movie> movieBox = Optional.ofNullable(movie);
 
         if (movieBox.isEmpty()) {
             return "error -> movie not found";
@@ -94,19 +91,12 @@ public final class RateCommand extends Action {
 
     }
 
-    private String rateShow() {
+    private String rateShow(final User user) {
         UserService userService = new UserService();
         ShowService showService = new ShowService();
 
-        User user = userService.findUserByName(this.user);
         Show show = showService.findShowByTitle(this.title);
-
-        Optional<User> userBox = Optional.ofNullable(user);
         Optional<Show> showBox = Optional.ofNullable(show);
-
-        if (userBox.isEmpty()) {
-            return "error -> user not found";
-        }
 
         if (showBox.isEmpty()) {
             return "error -> show not found";

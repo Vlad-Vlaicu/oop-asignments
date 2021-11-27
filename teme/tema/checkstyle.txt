@@ -1,7 +1,8 @@
 Starting audit...
 [ERROR] D:\teme\POO\tema1-VideosDB\oop-asignments\teme\tema\.\src\actions\commands\AddToFavoriteCommand.java:36:14: 'user' hides a field. [HiddenField]
 [ERROR] D:\teme\POO\tema1-VideosDB\oop-asignments\teme\tema\.\src\actions\commands\AddToSeenCommand.java:36:14: 'user' hides a field. [HiddenField]
-[ERROR] D:\teme\POO\tema1-VideosDB\oop-asignments\teme\tema\.\src\actions\commands\RateCommand.java:67:14: 'user' hides a field. [HiddenField]
-[ERROR] D:\teme\POO\tema1-VideosDB\oop-asignments\teme\tema\.\src\actions\commands\RateCommand.java:101:14: 'user' hides a field. [HiddenField]
+[ERROR] D:\teme\POO\tema1-VideosDB\oop-asignments\teme\tema\.\src\actions\commands\RateCommand.java:58:14: 'user' hides a field. [HiddenField]
+[ERROR] D:\teme\POO\tema1-VideosDB\oop-asignments\teme\tema\.\src\actions\commands\RateCommand.java:69:41: 'user' hides a field. [HiddenField]
+[ERROR] D:\teme\POO\tema1-VideosDB\oop-asignments\teme\tema\.\src\actions\commands\RateCommand.java:94:40: 'user' hides a field. [HiddenField]
 Audit done.
-Checkstyle ends with 4 errors.
+Checkstyle ends with 5 errors.

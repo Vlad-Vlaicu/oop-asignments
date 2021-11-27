@@ -1,38 +1,300 @@
-Object Oriented Programming Course
-Homework - VideosDB
+######################      README       ######################
 
-November 2021
+                            VideosDB
+                                        Vlad Vlaicu 322CD
 
-# Info
-https://ocw.cs.pub.ro/courses/poo-ca-cd/teme/tema
 
-# About the code
 
-We provide the input tests, the logic that parses them and the checker that runs them.
+1) --- Workflow ---
 
-* test_db - contains the tests in JSON format
-* src
-   * checker - the checker's sources including the checkstyle necessary files, not to be modified
-   * fileio - classes for parsing the input files, not to be modified
-   * common, utils
-        * contain utility classes with constants and static methods
-        * you can add your own functionality in the existing classes or add new classes as well
-   * actor
-        * contains an enum for the types of awards an actor can have - do not modify it
-        * you can add here your actor related classes
-   * entertainment
-        * contains an enum for the supported video genres - do not modify it
-        * class for representing a Season of a tv show - do not modify it
-        * you can add here your entertainment related classes
+Programul are punctul de plecare in clasa Main din pachetul main.
+Pentru fiecare test se creaza o baza de date si se populeaza, precum si o lista
+de instate Action. Lista de actiuni este parcursa si din fiecare este apelata metoda
+execute() care intoarce raspunsul actiunii sub forma de String. Este creat un obiect
+JSONObject pe baza raspunsului si adaugat in JSONArray pentru afisare.
 
-We encourage you to organize your implementation in packages based on the functionality their classes offer. Try to keep
-your code modular, readable and documented.
 
-# Testing
 
-The Main class runs the checker on your implementation. Add the entry point to your implementation in it.
+2) --- System requirements ---
 
-Run Main to test your implementation from the IDE or from command line.
+Programul a fost creat in Java 17 si utilizeaza elemente specifice acestei versiuni
 
-Run the main method from Test class with the name of the input file from the command line and the result will be written
-to the out.txt file. Thus, you can compare this result with ref.
+
+3) --- Program Structure ---
+
+Programul a fost construit in mai multe layere pentru a asigura decuplabilitatea codului.
+
+Database <--->  DAO layer <---> Service layer <---> rest of the app
+
+    * Database - este layerul care se ocupa cu stocarea si managementul datelor
+               - comunica numai cu layer-ul de dao
+
+    * Data Access Object (dao) - este layer-ul care se ocupa cu chestionarea bazei de date
+                               - face operatii simple de tipul INSERT, SELECT ALL, DELETE
+                               - este legatura dintre database si restul aplicatiei
+
+    * Service layer - este layer-ul care prelucreaza datele venite de la dao
+                    - construieste operatii complexe pe baza operatiilor elementare ale dao
+                    - are rolul de a decupla restul aplicatiei de implementarea efectiva a
+                    bazei de date
+
+    * Application layout - este aplicatia in sine care utilizeaza Service layout pentru a
+                        comunica cu baza de date
+
+Programul foloseste o ierahie de clase care se regaseste in pachetul actions care se
+ocupa cu implementarea efectiva a functionalitatii cerute, fiecarei clase raspunzand de
+un domeniu.
+
+
+4) --- action package ---
+
+Cuprinde clasele corespunzatoare fiecarui tip de cerinta:
+
+                                    Action (i)
+                        _______________|_________________
+                        |              |                |
+                    Commands         Query(i)     Recommendations
+                                        |
+                                     Queries
+
+pachetul contine clasa ActionFactory care consruieste un anumit tip de Actiune in
+functie de inputul dat
+
+
+4.1) --- commands package ---
+
+    AddToFavoriteCommand - primeste numele ului si titlul videoclipului care trebuie adaugat
+                        in lista de favorite ale userului
+                         - verifica daca userul exista
+                         - verifica daca videoclipul a fost vazut
+                         - incearca sa adauge videoclipul in lista si intoarce un mesaj
+                         (String) in functie de statusul operatiei
+
+    AddToSeeCommand - primeste numele userului si titlul videoclipului vizionat
+                    - verifica daca userul exista
+                    - adauga videoclipul in history-ul userului
+
+    RateCommand     - primeste numele userului, titlul care trebuie gradat, nota data
+                    si numarul sezonului
+                    - se verifica daca userul exista
+                    - in functie de tipul de video care sa primeasca nota se va apela functia rateMovie sau functia rateShow
+                    - se verifica daca videoclipul exista
+                    - se verifica daca videoclipul a fost vizionat de utilizator
+                    - se gradeaza videoclipul, modificand lista de grades a videoclipului precum si lista de gradings a userului
+
+
+4.2) --- queries package ---
+
+     Query (interface) - mosteneste interfata Action si contine campurile comune ale tuturor tipurilor de queries
+
+     ActorQuery - executa toate query care au legatura cu instantele de Actor
+
+            * getActorsByAverage (m) - construieste o lista de Rating care retin numele actorilor si ratingul mediu
+                                     - lista este sortata conform cerintei si a tipului de sortare mentionat
+                                     - raspunsul este lista sortata a numelor actorilor
+
+            * getActorsByAwards (m)  - parcurge lista de actori si verifica daca acestia sunt eligibili - au
+                        toate premiile mentionate
+                                     - daca este eligibil, un nou rating este creat si adaugat in lista de ratings
+                        stocand numele actorului si numarul total de premii al acestuia
+                                     - lista de ratings este sortata conform cerintei si a tipului de sortare mentionat
+
+            * getActorsByDescription (m) - parcurge lista de actori si verifica daca actorul curent are in descrierea carierei
+                                      toate cuvintele cheie cerute
+                                         - daca actorul este eligibil, numele acestuia este adaugat intr-o lista care ulterior
+                                      este sortata
+
+                - metodele intorc o lista de Stringuri care reprezinta numele actorilor
+                - se limiteaza numarul de componente ale listei in functie de filtrul limit dat
+                - lista finala este transmisa ca paramentru metodei createQueryResult care creaza template-ul cerut din
+            elementele listei si intoarce un String care reprezinta raspunsul final al actiunii
+
+
+
+     MovieQuery - executa toate query care au legatura cu instantele de Movie
+
+                 * getMoviesByViews (m) - adauga intr-un map filmele vazute de toti utilizatorii si numarul total de vizualizari
+                                        - pe baza mapei se constuieste o lista de Rating care retin numele filmelor si numarul
+                                        de vizualizari
+                                        - lista de ratings este sortata conform cerintei si a tipului de sortare cerut
+                                        - metoda intoarce lista sortata a numelor filemelor
+
+
+                 * getMoviesByLength (m)  - parcurge lista de Movies si creaza o lista de Rating care retin numele filemelor
+                                        si durata acestora
+                                          - lista de ratings este sortata conform cerintei si a tipului de sortare cerut
+                                          - metoda intoarce lista sortata a numelor filemelor
+
+                 * getMoviesByFavorite (m) - parcurge lista de utilizatori si pune intr-un map numele videoclipurilor gasite
+                                        in lista de de favorite a userilor si numarul de useri care au acel videoclip
+                                        in lista de favorite
+                                           - pe baza acestui map este creata o lista de Ratings care stocheaza numele
+                                        videoclipurilor si numarul de aparitii ale acestuia in listele de favorite
+                                           - lista se sorteaza conform cerintei si a tipului de sortare cerut
+                                           - din lista se elimina videclipurile care nu sunt filme
+                                           - metoda intoarce lista ordonata de tituluri ale filmelor
+
+                 * getMoviesByRating (m)  - parcurge lista de filme si creaza o lista de Rating care stocheaza titlul
+                                      filmului si ratingul acestuia
+                                          - lista este sortata conform cerintei
+                                          - metoda intoarce lista sortata a numelor filmelor
+
+                - metodele intorc o lista de String care reprezinta numele filmelor
+                - se aplica filtrele de year si genre daca exista
+                - se limiteaza numarul de componente ale listei in functie de filtrul limit dat
+                - lista finala este transmisa ca paramentru metodei createQueryResult care creaza template-ul cerut din
+            elementele listei si intoarce un String care reprezinta raspunsul final al actiunii
+
+
+
+
+     ShowQuery - executa toate query care au legatura cu instantele de Show
+
+                      * getShowsByViews (m) - adauga intr-un map show-urile vazute de toti utilizatorii si numarul total de vizualizari
+                                             - pe baza mapei se constuieste o lista de Rating care retin numele show-urilor si numarul
+                                             de vizualizari
+                                             - lista de ratings este sortata conform cerintei si a tipului de sortare cerut
+                                             - metoda intoarce lista sortata a numelor filemelor
+
+
+                      * getShowsByLength (m)  - parcurge lista de Show si creaza o lista de Rating care retin numele show-urilor
+                                             si durata acestora
+                                               - lista de ratings este sortata conform cerintei si a tipului de sortare cerut
+                                               - metoda intoarce lista sortata a numelor show-urilor
+
+                      * getShowsByFavorite (m) - parcurge lista de utilizatori si pune intr-un map numele videoclipurilor gasite
+                                             in lista de de favorite a userilor si numarul de useri care au acel videoclip
+                                             in lista de favorite
+                                                - pe baza acestui map este creata o lista de Ratings care stocheaza numele
+                                             videoclipurilor si numarul de aparitii ale acestuia in listele de favorite
+                                                - lista se sorteaza conform cerintei si a tipului de sortare cerut
+                                                - din lista se elimina videclipurile care nu sunt show-uri
+                                                - metoda intoarce lista ordonata de tituluri ale show-urilor
+
+                      * getShowsByRating (m)  - parcurge lista de show-uri si creaza o lista de Rating care stocheaza titlul
+                                           show-ului si ratingul acestuia
+                                               - lista este sortata conform cerintei
+                                               - metoda intoarce lista sortata a numelor show-urilor
+
+                     - metodele intorc o lista de String care reprezinta numele show-urilor
+                     - se aplica filtrele de year si genre daca exista
+                     - se limiteaza numarul de componente ale listei in functie de filtrul limit dat
+                     - lista finala este transmisa ca paramentru metodei createQueryResult care creaza template-ul cerut din
+                 elementele listei si intoarce un String care reprezinta raspunsul final al actiunii
+
+
+
+
+
+     UserQuery - executa toate query care au legatura cu instantele de User
+
+                       * getUsersByRatings (m) - parcurge lista de users si creaza o lista de Rating care stocheaza
+                                             username-ul utilizatorului si numarul total de ratings date de acesta
+                                                - lista este sortata conform cerintei si a tipului de sortare cerut
+                                                - metoda intoarce lista sortata de username
+
+
+                - metodele intorc o lista de String care reprezinta numele userilor
+                - se limiteaza numarul de componente ale listei in functie de filtrul limit dat
+                - lista finala este transmisa ca paramentru metodei createQueryResult care creaza template-ul cerut din
+            elementele listei si intoarce un String care reprezinta raspunsul final al actiunii
+
+
+
+4.3) --- recommendations package ---
+
+    BestUnseenRecommendation - intoarce cel mai bine gradat videoclip care nu a fost vazut de user
+                             - parcurge lista de filme si de show-uri si le adauga intr-o lista de
+                             Rating care stocheaza numele videoclipului si grade-ul acestuia
+                             - lista de ratings este sortata conform cerintei
+                             - se parcurge lista sortata de ratings si se verifica daca video-ul curent
+                             a fost vizualizat de user
+
+
+    FavoriteRecommendation - intoarce cel mai preferat videoclip al utilizatorilor care nu a fost vizionat
+                        de user
+                           - se verifica daca recomandarea poate fi facuta userului
+                           - se parcurg toti userii si introduc intr-un map numele videoclipurilor si
+                        numarul de aparitii ale acestora in listele de videoclipuri preferate ale user-ilor
+                           - din map se genereaza o lista de Rating in care se stocheaza numele video-ului,
+                        numarul de aparitii al acestuia in listele de favorite ale utilizatorilor si id-ul
+                        lor din baza de date
+                           - se sorteaza lista de ratings conform cerintei
+                           - se parcurge lista de ratings si se verifica daca videoclipul curent a fost
+                        vazut de user
+
+
+    PopularRecommendation - intoarce primul videoclip din baza de date care nu a fost vazut de utilizator
+                        din cel mai popular genre
+                          - se verifica daca recomandarea poate fi facuta userului
+                          - se parcurg toti userii si se introduc intr-un map numele videclipurilor si
+                        numarul total de vizionari ale acestora
+                          - se parcurge mapul cu videclipuri creat anterior si se creaza un alt map care
+                        retine fiecare Genre si numarul de vizualizari ale videoclipurilor care se incadreazza
+                        in acel genre.
+                          - se parcurge map-ul de genre si se creaza o lista de Rating care stocheaza numele
+                        Genre si numarul total de vizualizari care ii corespunde
+                         - se sorteaza lista de ratings de la cel mai popular la cel mai nepopular
+                         - se parcurge lista de genre si pentru fiecare genre este creata o lista Rating
+                         de videoclipuri care apartin acelui genre
+                         - Rating pentru fiecare videclip retine numele videoclipului, si id-ul sau din baza
+                         de date
+                         - se sorteaza lista de videoclipuri conform cerintei
+                         - se parcurge lista sortata de videoclipuri si se verifica daca video-ul curent
+                         a fost vizualizat de utilizator
+
+
+    SearchRecommendation - intoarce toate videoclipurile care nu au fost vazute de user dintr-un anumit genre
+                         - se verifica daca recomandarea poate fi facuta userului
+                         - este creata o lista de Rating populata cu videoclipuri din genre specificat, rating
+                        stocheaza numele video-ului si rating-ul acestuia
+                         - lista de ratings se sorteaza conform cerintei
+                         - se creaza o lista de String in care sunt puse titlurile videoclipurilor care nu au
+                         fost vizualizate de user
+                         - daca rezultatul nu este vid, se apeleaza functia createSearchRecommResult care primeste
+                         ca parametru lista de rezultate si intoarce un String care reprezinta template-ul cerut
+
+
+
+    StandardRecommendation - intoarce primul videoclip din baza de date care nu a fost vizualizat de user
+                           - se creaza o lista de Rating in care se stocheaza numele video-ului si id-ul sau
+                           - se sorteaza lista crescator dupa id
+                           - se parcurge lista de videos si se verifica daca video-ul curent nu a fost vazut de user
+
+
+4.4) --- dao package ---
+
+                contine dao al entitatilor din database, implementeaza INSERT, SeLECT ALL, SELECT and DELETE
+
+
+4.5) --- database package ---
+
+                contine baza de date implementata ca Singleton
+
+
+4.6) --- entertainment package ---
+
+        * enum class ActorsAwards
+        * enum class Subscription
+        * enum class Genre
+        * class Rating - are 3 campuri: String name, double score si  double secondScore
+                       - clasa este utilizata pentru compararea diferitelor campuri si pentru a ordona
+                     obiecte care nu pot si ordonate in mod normal
+
+
+4.7) --- entities package ---
+
+    contine entitatile care se afla in database  ( Season este inclus in entitatea Show )
+
+
+4.8) --- services package ---
+
+    continte serviciile aferente fiecarei entitati din baza de date si serviciul pentru database
+
+
+4.9) --- utils package ---
+
+    contine clasele utilitare
+
+        * Utils -> implementeaza metode de conversie si creaza template-uri pentru afisarea diferitelor rezultate
+        * SortingUtils -> implementeaza sortarile aferente metodelor din clasele care mostenesc interfata Action

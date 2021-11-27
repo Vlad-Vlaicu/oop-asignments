@@ -11,13 +11,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public final class Database {
 
-    private List<Actor> actors;
-    private List<Movie> movies;
-    private List<Show> shows;
-    private List<User> users;
-    private AtomicInteger idActorHolder;
-    private AtomicInteger idVideoHolder;
-    private AtomicInteger idUserHolder;
+    private final List<Actor> actors;
+    private final List<Movie> movies;
+    private final List<Show> shows;
+    private final List<User> users;
+    private final AtomicInteger idActorHolder;
+    private final AtomicInteger idVideoHolder;
+    private final AtomicInteger idUserHolder;
 
     private Database() {
         actors = new LinkedList<>();

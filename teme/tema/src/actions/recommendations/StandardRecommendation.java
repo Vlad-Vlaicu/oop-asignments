@@ -1,13 +1,14 @@
 package actions.recommendations;
 
 import actions.Action;
-import entities.Movie;
-import entities.Show;
+import entertainment.Rating;
 import entities.User;
 import services.MovieService;
 import services.ShowService;
 import services.UserService;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -33,23 +34,21 @@ public final class StandardRecommendation extends Action {
         UserService userService = new UserService();
         User user = userService.findUserByName(username);
         Map<String, Integer> history = user.getHistory();
+        List<Rating> videos = new ArrayList<>();
+        movieService.getAllMovies().stream()
+                .map(s -> new Rating(s.getName(), s.getId()))
+                .forEach(videos::add);
+        showService.getAllShows().stream()
+                .map(s -> new Rating(s.getName(), s.getId()))
+                .forEach(videos::add);
 
-        List<Movie> movies = movieService.getAllMovies();
-        List<Show> shows = showService.getAllShows();
+        videos.sort(Comparator.comparingDouble(Rating::getScore));
 
-        for (Movie m : movies) {
-            if (!history.containsKey(m.getName())) {
-                return "StandardRecommendation result: " + m.getName();
+        for (Rating r : videos) {
+            if (!history.containsKey(r.getName())) {
+                return "StandardRecommendation result: " + r.getName();
             }
         }
-
-        for (Show s : shows) {
-            if (!history.containsKey(s.getName())) {
-                return "StandardRecommendation result: " + s.getName();
-            }
-        }
-
         return "StandardRecommendation cannot be applied!";
-
     }
 }

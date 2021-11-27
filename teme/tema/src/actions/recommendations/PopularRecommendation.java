@@ -112,11 +112,8 @@ public final class PopularRecommendation extends Action {
                     return "PopularRecommendation result: " + video.getName();
                 }
             }
-
         }
 
-
         return "PopularRecommendation cannot be applied!";
-
     }
 }

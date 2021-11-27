@@ -111,7 +111,6 @@ public final class ActorQuery extends Query {
         List<Actor> actors = actorService.getAllActors();
         List<String> result = new ArrayList<>();
         for (Actor a : actors) {
-
             List<String> descriptionWords = Arrays.asList(a.getCareerDescription()
                     .replaceAll("[^a-zA-Z ]", " ")
                     .toLowerCase()

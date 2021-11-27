@@ -131,6 +131,7 @@ public final class MovieQuery extends Query {
 
     private List<String> getMoviesByFavorite() {
         UserService userService = new UserService();
+        MovieService movieService = new MovieService();
         HashMap<String, Integer> map = new HashMap<>();
         userService.getAllUsers().stream()
                 .map(User::getFavouriteList)
@@ -150,6 +151,8 @@ public final class MovieQuery extends Query {
                 .collect(Collectors.toList());
 
         SortingUtils.videoFavorite(movies, this.getSortType());
+
+        movies.removeIf(r -> movieService.findMovieByTitle(r.getName()) == null);
 
         return movies.stream().map(Rating::getName).collect(Collectors.toList());
     }

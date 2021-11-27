@@ -135,6 +135,7 @@ public final class ShowQuery extends Query {
 
     private List<String> getShowsByFavorite() {
         UserService userService = new UserService();
+        ShowService showService = new ShowService();
         HashMap<String, Integer> map = new HashMap<>();
         userService.getAllUsers().stream()
                 .map(User::getFavouriteList)
@@ -155,6 +156,8 @@ public final class ShowQuery extends Query {
                 .collect(Collectors.toList());
 
         SortingUtils.videoFavorite(shows, this.getSortType());
+
+        shows.removeIf(r -> showService.findShowByTitle(r.getName()) == null);
 
         return shows.stream().map(Rating::getName).collect(Collectors.toList());
     }
